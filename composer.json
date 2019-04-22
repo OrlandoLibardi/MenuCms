@@ -1,0 +1,32 @@
+{
+    "name": "orlandolibardi/menucms",
+    "description": "Modulo de interface gráfica para criar menus",
+    "type": "module",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Orlando Libardi",
+            "email": "orlando.libardi@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "orlandolibardi/admincms": "dev-master",
+        "orlandolibardi/filescms" : "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "OrlandoLibardi\\MenuCms\\": "./"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "OrlandoLibardi\\MenuCms\\app\\Providers\\OlCmsMenuServiceProvider"
+            ],
+            "aliases": {
+                "OlCmsMenu": "OrlandoLibardi\\MenuCms\\app\\Providers\\OlCmsMenuFacada"
+            }  
+        }
+    }
+}
