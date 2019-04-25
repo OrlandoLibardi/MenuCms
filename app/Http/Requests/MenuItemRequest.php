@@ -4,7 +4,7 @@ namespace OrlandoLibardi\MenuCms\app\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class MenuRequest extends FormRequest
+class MenuItemRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,24 +27,30 @@ class MenuRequest extends FormRequest
         switch($this->method()){
             case 'POST':
                 $rules = [
-                    'name'         => 'required|string|max:255',
-                    'template'     => 'required'
+                    'title'   => 'required|string|max:255',
+                    'url'     => 'required',
+                    'parent'  => 'sometimes|exists:menu_items,id',
+                    'menu_id' => 'required|exists:menus,id'
                 ];   
             break;    
             case 'PUT':
                 $rules = [
-                    'name'         => 'required|string|max:255',
-                    'template'     => 'required'
+                    'title'    => 'required|string|max:255',
+                    'url'      => 'required',
+                    'parent'   => 'sometimes|exists:menu_items,id',
+                    'menu_id'  => 'required|exists:menus,id',
+                    'order_at' => 'required|numeric'
                 ]; 
             break;
             case 'PATCH':
                 $rules = [
-                    'status'         => 'required|min:0|max:1',
+                    'id'    => 'required|exists:menu_items,id',
+                    'order' => 'required|min:0|max:1',
                 ]; 
             break;
             case 'DELETE':
                 $rules = [
-                    'id.*' => 'required|exists:menus,id' 
+                    'id.*' => 'required|exists:menu_items,id' 
                 ];
             break;
             default:

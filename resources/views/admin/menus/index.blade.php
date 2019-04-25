@@ -2,19 +2,19 @@
 <!-- breadcrumbs -->
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-lg-9">
-        <h2>Páginas</h2>
+        <h2>Menus</h2>
         <ol class="breadcrumb">
             <li>
                 <a href="/admin">Paínel de controle</a>
             </li>
-            <li class="active">Páginas </li>
+            <li class="active">Menus </li>
         </ol>
     </div>
     <div class="col-md-3 padding-btn-header text-right">
         @can('create')
-        <a href="javascript:;" class="btn btn-success btn-sm" data-toggle="modal" data-target="#modal-pages">Nova Página</a>
+        <a href="{{ Route('menu.create') }}" class="btn btn-success btn-sm">Novo Menu</a>
         @else
-        <a href="javascript:;" class="btn btn-success btn-sm disabled alert-action">Nova Página</a>
+        <a href="javascript:;" class="btn btn-success btn-sm disabled alert-action">Novo Menu</a>
         @endcan
     </div>
 </div>
@@ -25,7 +25,7 @@
     <div class="col-md-8">
         <div class="ibox float-e-margins">
             <div class="ibox-title">
-                <h5>Paginas cadastradas</h5>
+                <h5>Menus cadastradas</h5>
                 <div class="ibox-tools">
                     <a class="collapse-link"> <i class="fa fa-chevron-up"></i>  </a>
                 </div>
@@ -37,48 +37,51 @@
                             <thead>
                                 <tr>
                                     <td width="10"><input type="checkbox" name="excludeAll"></td>
-                                    <td>Título da página</td>
-                                    <td width="200">URL</td>
+                                    <td>Name</td>
+                                    <td width="200">Template</td>
+                                    <td width="300">Usage</td>
                                     <td width="150">Criado em:</td>
                                     <td width="150">Atualizado em:</td>
-                                    <td width="50">Visualizar</td>
-                                    <td width="50">Status</td>
-
+                                    <td width="50">Administrar</td>
                                     <td width="50">Editar</td>
                                 </tr>
                             </thead>
                             <tbody>
                                 @can('edit')
-                                @foreach ($data as $key=>$page)
+                                @foreach ($menus as $menu)
                                     <tr>
-                                        <td><input type="checkbox" name="exclude" value="{{ $page->id }}"> </td>
-                                        <td>{{ $page->name }}</td>
-                                        <td>{{ $page->alias }}</td>
-                                        <td>{{ $page->created_at }}</td>
-                                        <td>{{ $page->updated_at }}</td>
-                                        <td class="text-center"><a href="{{ Route('pages.show', ['id' => $page->id ]) }}" target="_view" class="btn btn-info btn-sm"><i class="fa fa-share" aria-hidden="true"></i></a></td>
-                                        <td class="text-center">
-                                            @include('admin.includes.btn_status', ['id' => $page->id, 'status' => $page->status])
+                                        <td><input type="checkbox" name="exclude" value="{{ $menu->id }}"> </td>
+                                        <td>{{ $menu->name }}</td>
+                                        <td>{{ $menu->template }}</td>
+                                        <td>&#123;&#123; OlCmsMenu::show('{{$menu->alias}}') &#125;&#125; 	 	</td>
+                                        <td>{{ $menu->created_at }}</td>
+                                        <td>{{ $menu->updated_at }}</td>
+                                        <td width="50" class="text-center">
+                                            <a href="{{ Route('menu-items.show', ['alias' => $menu->alias]) }}" class="btn btn-sm btn-flat btn-info">
+                                                <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                            </a>
                                         </td>
                                         <td class="text-center">
-                                            @include('admin.includes.btn_edit', ['route' => route('pages.edit', ['id' => $page->id])])
+                                            @include('admin.includes.btn_edit', ['route' => route('menu.edit', ['id' => $menu->id])])
                                         </td>
                                     </tr>
                                 @endforeach
                                 @else
-                                @foreach ($data as $key=>$page)
+                                @foreach ($menus as $menu)
                                     <tr>
-                                        <td><input type="checkbox" name="exclude" value="{{ $page->id }}"> </td>
-                                        <td>{{ $page->name }}</td>
-                                        <td>{{ $page->alias }}</td>
-                                        <td>{{ $page->created_at }}</td>
-                                        <td>{{ $page->updated_at }}</td>
-                                        <td class="text-center"><a href="{{ Route('pages.show', ['id' => $page->id ]) }}" target="_view" class="btn btn-info btn-sm"><i class="fa fa-share" aria-hidden="true"></i></a></td>
-                                        <td class="text-center">
-                                            @include('admin.includes.btn_status_disabled', ['id' => $page->id, 'status' => $page->status])
+                                        <td><input type="checkbox" name="exclude" value="{{ $menu->id }}"> </td>
+                                        <td>{{ $menu->name }}</td>
+                                        <td>{{ $menu->template }}</td>
+                                        <td></td>
+                                        <td>{{ $menu->created_at }}</td>
+                                        <td>{{ $menu->updated_at }}</td>
+                                        <td width="50" class="text-center">
+                                        <a href="javascript:;" class="btn btn-sm btn-flat btn-info">
+                                            <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                        </a>
                                         </td>
                                         <td class="text-center">
-                                            @include('admin.includes.btn_edit_disabled', ['route' => route('pages.edit', ['id' => $page->id])])
+                                            @include('admin.includes.btn_edit_disabled', ['route' => route('menu.edit', ['id' => $menu->id])])
                                         </td>
                                     </tr>
                                 @endforeach
@@ -93,36 +96,9 @@
 
     </div>
 </div>
-<div id="modal-pages" class="modal fade" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Selecione um modelo de arquivo</h4>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-12">
-                            {!! Form::open(['route' => 'create-temp-file', 'method'=>'POST', 'id'=>'templates', 'name' => 'form-template', 'class' => 'form-horizontal']) !!}
-                            <div class="form-group">
-                                <label for="template" class="col-sm-3 control-label">Arquivo base</label>
-                                <div class="col-sm-9">
-                                    {!! Form::select('template', $files, null, ['class' => 'form-control', 'placeholder' => '--Selecione--']) !!}
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-sm-12 text-right">
-                                    {!! Form::submit('Enviar', ['class' => "btn btn-sm btn-primary"]) !!}
-                                </div>
-                            </div>
-
-                            {!! Form::close() !!}
-                    </div>
-                </div>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div>
+<input name="route_create" value="{{ Route('menu.create') }}" type="hidden">
+<input name="route_delete" value="/admin/menu/destroy/" type="hidden">
+<input name="route_status" value="/admin/menu/status/" type="hidden">
 @endsection
 @push('style')
 <!-- Adicional Styles -->
@@ -135,13 +111,13 @@
 <script src="{{ asset('assets/theme-admin/js/plugins/OLForm/OLExclude.jquery.js') }}"></script>
 <script>
 $("#templates").OLForm({listErrorPosition: 'after', listErrorPositionBlock: '.modal-header', btn : true}, locationIn);
-function locationIn(a){ window.location = "{{ Route('pages.create') }}?file_route="+a.url; }
+function locationIn(a){ window.location = $("input[name=route_create]").val() }
 /*Exclude*/
-$("#results").OLExclude({'action' : "/admin/pages/destroy/", 'inputCheckName' : 'exclude', 'inputCheckAll' : 'excludeAll'});
+$("#results").OLExclude({'action' : $("input[name=route_delete]").val(), 'inputCheckName' : 'exclude', 'inputCheckAll' : 'excludeAll'});
 
 $(document).on("click", "a.btn-status:not(.disabled)", function(){
     var $this = $(this),
-    _url  = '/admin/pages/status/',
+    _url  = $("input[name=route_status]").val(),
     _id = $this.attr("data-id"),
     _status = $this.attr("data-status");
     $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': $("meta[name=csrf-token]").attr("content") } });

@@ -22,7 +22,8 @@
     "extra": {
         "laravel": {
             "providers": [
-                "OrlandoLibardi\\MenuCms\\app\\Providers\\OlCmsMenuServiceProvider"
+                "OrlandoLibardi\\MenuCms\\app\\Providers\\OlCmsMenuServiceProvider",
+                "OrlandoLibardi\\MenuCms\\app\\Providers\\OlCmsMenuviewServiceProvider"
             ],
             "aliases": {
                 "OlCmsMenu": "OrlandoLibardi\\MenuCms\\app\\Providers\\OlCmsMenuFacada"

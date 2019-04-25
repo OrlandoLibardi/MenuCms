@@ -7,12 +7,13 @@ use App\Http\Controllers\Controller;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
-use OrlandoLibardi\MenuCms\app\Http\Requests\MenuRequest;
-use OrlandoLibardi\MenuCms\app\Menu;
-use OrlandoLibardi\MenuCms\app\MenuItem;
-use OrlandoLibardi\MenuCms\app\ServiceMenu;
+use OrlandoLibardi\MenuCms\app\Http\Requests\MenuItemRequest;
 
-class MenuController extends Controller
+use OrlandoLibardi\MenuCms\app\Menu;
+use OrlandoLibardi\PageCms\app\Page;
+use OrlandoLibardi\MenuCms\app\MenuItem;
+
+class MenuItemController extends Controller
 {
     public function __construct()
     {
@@ -29,10 +30,7 @@ class MenuController extends Controller
      */
     public function index() 
     {  
-     
-     $menus = Menu::paginate(10);
-     return view('admin.menus.index', compact('menus'));      
-        
+                
     }
     /**
      * Show the form for creating a new resource.
@@ -41,11 +39,17 @@ class MenuController extends Controller
      */
     public function create() 
     {
-        return view('admin.menus.create');       
+          
     }
-    public function show($id)
+    public function show($alias)
     {
-      
+      $menu  = Menu::where('alias', $alias)->first();
+      $pages = Page::select('id', 'name', 'alias')->orderBy('name','ASC')->get();
+      $items = MenuItem::items($menu->id)
+               ->orderBy('order_at', 'ASC')
+               ->get();
+               
+       return view('admin.menus.items.index', compact('menu', 'items', 'pages'));         
     }
     /**
      * Store a newly created resource in storage.
@@ -53,10 +57,9 @@ class MenuController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(MenuRequest $request) {
+    public function store(MenuItemRequest $request) {
         
-
-        Menu::create($request->all());
+        MenuItem::create( $request->all() );
 
         return response()
         ->json(array(
@@ -70,14 +73,15 @@ class MenuController extends Controller
      * @param  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id) 
+    public function edit(Request $request,$id) 
     {
-       $menu = Menu::find($id);
+       $selected = MenuItem::find($id);
+       $pages = Page::select('id', 'name', 'alias')->orderBy('name','ASC')->get();       
+       $items = MenuItem::items($selected->menu->id)
+                ->orderBy('order_at', 'ASC')
+                ->get();
 
-       $template = ServiceMenu::loadTemplate($menu->template);
-
-       return view('admin.menus.edit', compact('menu', 'template'));  
-
+       return view('admin.menus.items.edit', compact('selected', 'pages', 'items'));
     }
     /**
      * Update the specified resource in storage.
@@ -86,10 +90,29 @@ class MenuController extends Controller
      * @param  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(MenuRequest $request, $id) 
+    public function update(MenuItemRequest $request, $id) 
     {
-        
-        Menu::find($id)->update($request->all());
+        MenuItem::find($id)
+                 ->update( $request->all() );
+
+        return response()
+        ->json(array(
+            'message' => __('messages.update_success'),
+            'status'  =>  'success'
+        ), 201);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function reOrder(MenuItemRequest $request) 
+    {
+        MenuItem::find( $request->id )
+                ->update(['order_at' => $request->order ]);
 
         return response()
         ->json(array(
@@ -104,26 +127,20 @@ class MenuController extends Controller
      * @param  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(MenuRequest $request, $id) {
-        
+    public function destroy(MenuItemRequest $request, $id) {
+
         foreach(json_decode($request->id) as $item)
         {
-            Menu::find($item)->delete();            
+            MenuItem::find($item)->delete();            
         }
-        
+
         return response()
         ->json(array(
-            'message' => __('messages.update_success'),
+            'message' => __('messages.destroy_success'),
             'status'  =>  'success'
         ), 201);
     }
-    /*
-    * load
-    */
-    public function load(Request $request)
-    {
-
-    }
+    
 
     
 }
