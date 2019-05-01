@@ -49,30 +49,4 @@ class OlCmsMenuServiceProvider extends ServiceProvider{
         MenuItem::observe(MenuItemObserver::class);
     }
     
-    /**
-     * Register the service provider.
-     */
-    public function register()
-    {               
-        $this->registerOlCmsMenuBuilder();
-        $this->app->alias('OlCmsMenu', OlCmsMenuBuilder::class);        
-    }
-
-    /**
-     * Register the OlCmsMenu builder instance.
-     */
-    protected function registerOlCmsMenuBuilder()
-    {
-        $this->app->singleton('OlCmsMenu', function ($app) {
-            return new OlCmsMenuBuilder();
-        });
-    }    
-
-    /**
-     * Get the services provided by the provider.
-     */
-    public function provides()
-    {
-        return ['OlCmsMenu', OlCmsMenuBuilder::class];
-    }
 }

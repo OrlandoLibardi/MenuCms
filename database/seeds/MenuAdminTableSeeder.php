@@ -14,7 +14,7 @@ class MenuAdminTableSeeder extends Seeder
     public function run()
     {               
        Admin::create([
-            'name' => 'Gerenciador de Menus',
+            'name' => 'Menus',
             'route' => 'menu.index',
             'icon' => 'fa fa-list',
             'parent_id' => 0,
@@ -24,3 +24,4 @@ class MenuAdminTableSeeder extends Seeder
 
     }
 }
+

@@ -11,6 +11,9 @@ use Illuminate\View\Compilers\BladeCompiler;
 
 class OlCmsMenuviewServiceProvider extends ServiceProvider
 {
+
+   
+
     /**
      * Register the service provider.
      */
@@ -26,7 +29,7 @@ class OlCmsMenuviewServiceProvider extends ServiceProvider
     protected function registerOlCmsMenuBuilder()
     {
         $this->app->singleton('OlCmsMenu', function ($app) {
-            return new OlCmsMenuBuilder();
+            return new OlCmsMenuBuilder($app['url'], $app['request']);
         });
     }    
 
